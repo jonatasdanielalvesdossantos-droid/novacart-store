@@ -69,15 +69,15 @@ export async function onRequestGet({ request, env }) {
       : [];
 
     const products = items.map((p) => ({
-      id: p.id ?? p.pid ?? p.productId ?? null,
-      name: p.nameEn ?? p.productNameEn ?? p.productName ?? p.name ?? "Unnamed product",
-      sku: p.sku ?? p.productSku ?? null,
-      image: p.bigImage ?? p.productImage ?? p.productImageUrl ?? p.image ?? null,
-      price: p.sellPrice ?? p.nowPrice ?? p.discountPrice ?? p.productPrice ?? p.price ?? null,
+      id: p.id ?? p.pid ?? p.productId ?? p.productid ?? null,
+      name: p.nameEn ?? p.nameen ?? p.productNameEn ?? p.productnameen ?? p.productName ?? p.name ?? "Unnamed product",
+      sku: p.sku ?? p.productSku ?? p.productsku ?? null,
+      image: p.bigImage ?? p.bigimg ?? p.bigimage ?? p.productImage ?? p.productImageUrl ?? p.image ?? p.img ?? null,
+      price: p.sellPrice ?? p.sellprice ?? p.nowPrice ?? p.nowprice ?? p.discountPrice ?? p.discountprice ?? p.productPrice ?? p.price ?? null,
       currency: p.currency ?? "USD",
-      inventory: p.warehouseInventoryNum ?? p.inventoryNum ?? p.stockNum ?? null,
+      inventory: p.totalInventory ?? p.totalinventory ?? p.warehouseInventoryNum ?? p.inventoryNum ?? p.stockNum ?? p.inventory ?? null,
       warehouseCountryFilter: "US",
-      productUrl: p.productUrl ?? p.productLink ?? null
+      productUrl: p.productUrl ?? p.productLink ?? p.supplierlink ?? null
     }));
 
     return json({
@@ -88,6 +88,11 @@ export async function onRequestGet({ request, env }) {
       verifiedWarehouseOnly: true,
       count: products.length,
       products,
+      diagnostic: {
+        dataType: Array.isArray(root) ? "array" : typeof root,
+        dataKeys: root && !Array.isArray(root) && typeof root === "object" ? Object.keys(root).slice(0, 30) : [],
+        firstItemKeys: items[0] && typeof items[0] === "object" ? Object.keys(items[0]).slice(0, 60) : []
+      },
       note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
   } catch {
