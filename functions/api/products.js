@@ -38,7 +38,7 @@ export async function onRequestGet({ request, env }) {
 
     const params = new URLSearchParams({
       page: "1",
-      size: "10",
+      size: "30",
       keyWord: SEARCHES[requested],
       countryCode: "US",
       verifiedWarehouse: "1",
@@ -70,7 +70,7 @@ export async function onRequestGet({ request, env }) {
         : Array.isArray(root?.records) ? root.records
         : [];
 
-    const products = items.map((p) => ({
+    const normalized = items.map((p) => ({
       id: p.id ?? p.pid ?? p.productId ?? p.productid ?? null,
       name: p.nameEn ?? p.nameen ?? p.productNameEn ?? p.productnameen ?? p.productName ?? p.name ?? "Unnamed product",
       sku: p.sku ?? p.productSku ?? p.productsku ?? null,
@@ -81,6 +81,15 @@ export async function onRequestGet({ request, env }) {
       warehouseCountryFilter: "US",
       productUrl: p.productUrl ?? p.productLink ?? p.supplierlink ?? null
     }));
+    const terms = {
+      scrubber: ["scrubber", "cleaning brush", "electric cleaning brush", "spin brush"],
+      remote: ["bluetooth scrolling remote", "page turner", "scrolling remote", "phone remote"],
+      dishrack: ["dish drying rack", "dish rack", "drying rack", "drainer rack"]
+    }[requested];
+    const products = normalized.filter((p) => {
+      const name = String(p.name || "").toLowerCase();
+      return terms.some((term) => name.includes(term));
+    });
 
     return json({
       ok: true,
@@ -90,6 +99,7 @@ export async function onRequestGet({ request, env }) {
       verifiedWarehouseOnly: true,
       count: products.length,
       products,
+      rawCandidateCount: normalized.length,
       note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
   } catch {
