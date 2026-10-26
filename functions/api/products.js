@@ -69,14 +69,14 @@ export async function onRequestGet({ request, env }) {
       : [];
 
     const products = items.map((p) => ({
-      id: p.pid ?? p.productId ?? p.id ?? null,
-      name: p.productNameEn ?? p.productName ?? p.nameEn ?? p.name ?? "Unnamed product",
-      sku: p.productSku ?? p.sku ?? null,
-      image: p.productImage ?? p.productImageUrl ?? p.image ?? null,
-      price: p.sellPrice ?? p.productPrice ?? p.price ?? null,
+      id: p.id ?? p.pid ?? p.productId ?? null,
+      name: p.nameEn ?? p.productNameEn ?? p.productName ?? p.name ?? "Unnamed product",
+      sku: p.sku ?? p.productSku ?? null,
+      image: p.bigImage ?? p.productImage ?? p.productImageUrl ?? p.image ?? null,
+      price: p.sellPrice ?? p.nowPrice ?? p.discountPrice ?? p.productPrice ?? p.price ?? null,
       currency: p.currency ?? "USD",
       inventory: p.warehouseInventoryNum ?? p.inventoryNum ?? p.stockNum ?? null,
-      warehouseCountry: "US",
+      warehouseCountryFilter: "US",
       productUrl: p.productUrl ?? p.productLink ?? null
     }));
 
