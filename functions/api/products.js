@@ -62,11 +62,13 @@ export async function onRequestGet({ request, env }) {
     }
 
     const root = payload.data;
+    const contentGroups = Array.isArray(root?.content) ? root.content : [];
     const items = Array.isArray(root) ? root
       : Array.isArray(root?.list) ? root.list
-      : Array.isArray(root?.content) ? root.content
-      : Array.isArray(root?.records) ? root.records
-      : [];
+      : contentGroups.length
+        ? contentGroups.flatMap((group) => Array.isArray(group?.productList) ? group.productList : [])
+        : Array.isArray(root?.records) ? root.records
+        : [];
 
     const products = items.map((p) => ({
       id: p.id ?? p.pid ?? p.productId ?? p.productid ?? null,
@@ -88,11 +90,6 @@ export async function onRequestGet({ request, env }) {
       verifiedWarehouseOnly: true,
       count: products.length,
       products,
-      diagnostic: {
-        dataType: Array.isArray(root) ? "array" : typeof root,
-        dataKeys: root && !Array.isArray(root) && typeof root === "object" ? Object.keys(root).slice(0, 30) : [],
-        firstItemKeys: items[0] && typeof items[0] === "object" ? Object.keys(items[0]).slice(0, 60) : []
-      },
       note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
   } catch {
