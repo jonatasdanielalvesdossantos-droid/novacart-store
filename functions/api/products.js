@@ -86,15 +86,27 @@ export async function onRequestGet({ request, env }) {
       return json({ ok: true, debug: true, search: "categories", matchingCategoryCount: unique.length, categories: unique }, 200);
     }
 
+    const categoryDiagnostic = debug && url.searchParams.get("keyword") === "categoryproducts";
+    const allowedCategories = {
+      cleaning: "3633986F-83D2-4A6F-8F4D-79EE2CF77B8F",
+      handtools: "55795653-09E8-4EE6-B477-1E30E7A601B2",
+      bathroom: "B62EE40F-7650-4715-A7A5-BA227540593C",
+      kitchen: "E448A723-43DC-4BD8-A9AD-2FB9699338B4"
+    };
+    const categoryName = url.searchParams.get("category");
+    if (categoryDiagnostic && !Object.prototype.hasOwnProperty.call(allowedCategories, categoryName)) {
+      return json({ ok: false, error: "Choose an allowed category.", availableCategories: Object.keys(allowedCategories) }, 400);
+    }
     const params = new URLSearchParams({
       page: "1",
       size: "30",
-      keyWord: searchKeyword,
+      keyWord: categoryDiagnostic ? "" : searchKeyword,
       countryCode: "US",
       verifiedWarehouse: "1",
       sort: "desc",
       orderBy: "0"
     });
+    if (categoryDiagnostic) params.set("categoryId", allowedCategories[categoryName]);
     const productResponse = await fetch(
       "https://developers.cjdropshipping.com/api2.0/v1/product/listV2?" + params.toString(),
       { headers: { "CJ-Access-Token": token } }
@@ -137,8 +149,9 @@ export async function onRequestGet({ request, env }) {
       return json({
         ok: true,
         debug: true,
-        search: requested,
-        keyword: searchKeyword,
+        search: categoryDiagnostic ? "categoryproducts" : requested,
+        category: categoryDiagnostic ? categoryName : undefined,
+        keyword: categoryDiagnostic ? null : searchKeyword,
         rawCandidateCount: normalized.length,
         candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory }))
       }, 200);
