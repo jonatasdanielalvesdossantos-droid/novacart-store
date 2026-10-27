@@ -25,3 +25,8 @@ Safe development rules
 Official CJ API references
 - Product API: https://developers.cjdropshipping.com/en/api/api2/api/product.html
 - Logistics API: https://developers.cjdropshipping.com/en/api/api2/api/logistic.html
+
+Supplier diagnostics security
+- Requests to `functions/api/products.js` using `?debug=1` require the Cloudflare Pages secret `CJ_DEBUG_TOKEN` and the `X-CJ-Debug-Token` request header.
+- Configure a strong random value for `CJ_DEBUG_TOKEN` in Cloudflare Pages environment secrets to use diagnostics. Without it, debug requests intentionally return 404.
+- Never put this token in a URL, source file, commit, or client-side code. The ordinary public product search does not require this debug token.
