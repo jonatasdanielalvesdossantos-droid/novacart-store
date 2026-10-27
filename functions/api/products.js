@@ -90,6 +90,7 @@ export async function onRequestGet({ request, env }) {
     const allowedCategories = {
       cleaning: "3633986F-83D2-4A6F-8F4D-79EE2CF77B8F",
       handtools: "55795653-09E8-4EE6-B477-1E30E7A601B2",
+      powertools: "9FC79C6B-AE70-472C-B8F8-D62479F0D03E",
       bathroom: "B62EE40F-7650-4715-A7A5-BA227540593C",
       kitchen: "E448A723-43DC-4BD8-A9AD-2FB9699338B4",
       homeappliances: "85EF081C-819E-448F-BD5C-C5D3F4CFAADA"
