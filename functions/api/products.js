@@ -21,6 +21,11 @@ export async function onRequestGet({ request, env }) {
   }
 
   const debug = url.searchParams.get("debug") === "1";
+  const debugKeywords = ["electric cleaning brush", "spin scrubber", "electric spin scrubber", "rotating scrubber", "electric scrub brush", "cordless scrubber"];
+  const debugKeyword = url.searchParams.get("keyword");
+  const searchKeyword = debug && requested === "scrubber" && debugKeyword && debugKeywords.includes(debugKeyword)
+    ? debugKeyword
+    : SEARCHES[requested];
 
   // Cache normal catalog searches; debug requests bypass cache so they show fresh candidates.
   const cacheKey = new Request(new URL(`/api/products-cache-v2?q=${encodeURIComponent(requested)}`, url.origin).toString(), { method: "GET" });
@@ -54,7 +59,7 @@ export async function onRequestGet({ request, env }) {
     const params = new URLSearchParams({
       page: "1",
       size: "30",
-      keyWord: SEARCHES[requested],
+      keyWord: searchKeyword,
       countryCode: "US",
       verifiedWarehouse: "1",
       sort: "desc",
@@ -103,7 +108,7 @@ export async function onRequestGet({ request, env }) {
         ok: true,
         debug: true,
         search: requested,
-        keyword: SEARCHES[requested],
+        keyword: searchKeyword,
         rawCandidateCount: normalized.length,
         candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory }))
       }, 200);
