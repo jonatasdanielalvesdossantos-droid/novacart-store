@@ -108,7 +108,7 @@ export async function onRequestGet({ request, env }) {
     });
     if (categoryDiagnostic) {
       if (categoryName === "homeappliances") {
-        params.set("lv2categoryList", JSON.stringify([allowedCategories[categoryName]]));
+        params.set("lv2categoryList", allowedCategories[categoryName]);
       } else {
         params.set("categoryId", allowedCategories[categoryName]);
       }
