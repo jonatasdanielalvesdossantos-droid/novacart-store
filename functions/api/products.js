@@ -102,7 +102,6 @@ export async function onRequestGet({ request, env }) {
       size: "30",
       keyWord: categoryDiagnostic ? "" : searchKeyword,
       countryCode: "US",
-      verifiedWarehouse: "1",
       sort: "desc",
       orderBy: "0"
     });
