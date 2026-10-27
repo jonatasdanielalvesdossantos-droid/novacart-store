@@ -56,6 +56,36 @@ export async function onRequestGet({ request, env }) {
       return json({ ok: false, error: limited ? "CJ rate limit reached. Wait at least 10 seconds before trying again." : "CJ authentication failed.", cjCode: auth?.code ?? null, retryAfterSeconds: limited ? 10 : null }, limited ? 429 : 502);
     }
 
+    if (debug && url.searchParams.get("keyword") === "categories") {
+      const categoryResponse = await fetch(
+        "https://developers.cjdropshipping.com/api2.0/v1/product/getCategory",
+        { headers: { "CJ-Access-Token": token } }
+      );
+      const categoryPayload = await categoryResponse.json().catch(() => null);
+      if (!categoryResponse.ok || categoryPayload?.success !== true) {
+        return json({ ok: false, error: "CJ category lookup failed.", httpStatus: categoryResponse.status, cjCode: categoryPayload?.code ?? null }, 502);
+      }
+      const matches = [];
+      const visit = (value) => {
+        if (Array.isArray(value)) {
+          for (const item of value) visit(item);
+          return;
+        }
+        if (!value || typeof value !== "object") return;
+        const name = value.categoryName ?? value.categorySecondName ?? value.categoryFirstName ?? value.name ?? null;
+        const id = value.categoryId ?? value.id ?? null;
+        if (name && id && /clean|household|bath|kitchen|home improvement|tools|brush|personal care/i.test(String(name))) {
+          matches.push({ name: String(name), id: String(id) });
+        }
+        for (const [key, child] of Object.entries(value)) {
+          if (key !== "categoryName" && key !== "categorySecondName" && key !== "categoryFirstName" && key !== "categoryId" && key !== "id") visit(child);
+        }
+      };
+      visit(categoryPayload.data);
+      const unique = Array.from(new Map(matches.map((item) => [item.id, item])).values());
+      return json({ ok: true, debug: true, search: "categories", matchingCategoryCount: unique.length, categories: unique }, 200);
+    }
+
     const params = new URLSearchParams({
       page: "1",
       size: "30",
