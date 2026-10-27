@@ -23,5 +23,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --check functions/api/products.js
+          node --check functions/api/catalog.js
+          node --check functions/api/health.js
+          node --check scripts/validate-catalog.mjs
       - name: Run local catalog safety checks
         run: node scripts/validate-catalog.mjs
