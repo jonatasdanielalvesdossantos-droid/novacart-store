@@ -4,6 +4,7 @@ This integration is being built only on `catalog-foundation`. It is not a produc
 
 ## Current foundation
 - `POST /api/admin/cj/search` performs an authenticated CJ keyword search.
+- `POST /api/admin/cj/import` saves a candidate to a Preview-only D1 table, deduplicated by supplier product ID. It returns a safe `503` until the `NOVACART_DB` binding exists.
 - It requires the server-side `NOVACART_ADMIN_TOKEN` header and `CJ_API_KEY` Cloudflare Pages secrets.
 - Search results are discovery candidates only. They are never automatically approved or published.
 - The route returns generic errors and does not expose supplier access tokens or raw CJ payloads.
@@ -14,6 +15,13 @@ Configure these under Cloudflare Pages > Settings > Environment variables for Pr
 - `NOVACART_ADMIN_TOKEN`: a long, random secret used in the `X-NovaCart-Admin-Token` request header.
 
 Do not put either value in HTML, Git, URLs, query parameters, logs, screenshots, or this repository. Do not reuse the debug token as the admin token. Never configure this feature in Production as part of this work.
+
+## Candidate import storage (Preview only)
+1. Create a D1 database for Preview only in Cloudflare; do not bind it to Production.
+2. Bind that database to the Pages Preview environment as `NOVACART_DB`.
+3. Apply `migrations/0001_cj_candidates.sql` to that Preview database using the Cloudflare D1 migrations workflow.
+4. Open `/admin/cj.html` behind Cloudflare Access and use **Import candidate (private)**. The unique supplier product ID prevents duplicate rows. Imports remain in `needs_verification` and are not connected to `data/products.json` or the public catalogue.
+5. If the D1 binding is missing, import intentionally fails closed with HTTP 503. Do not add a GitHub token or write repository files from the runtime.
 
 ## Planned modules
 1. Admin UI: search, review candidates, inspect product details, choose a specific variant, and import as `needs_verification`.
