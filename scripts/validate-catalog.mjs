@@ -74,6 +74,8 @@ if (!/PRE-LAUNCH PREVIEW/i.test(html) || !/CHECKOUT IS NOT AVAILABLE/i.test(html
   fail.push("Storefront must keep the pre-launch/checkout-disabled notice.");
 }
 if (!html.includes("/api/catalog")) fail.push("Storefront must request products from /api/catalog.");
+if (!/<html[^>]*lang="en"/i.test(html)) fail.push("Storefront must declare its English document language.");
+if (!/<meta[^>]+name="robots"[^>]+content="noindex, nofollow"/i.test(html)) fail.push("Pre-launch storefront must remain excluded from search indexing.");
 if (/\b(?:stripe|checkout\.sessions|payment_intent)\b/i.test(html)) {
   fail.push("Unexpected payment/checkout implementation detected in storefront HTML.");
 }
@@ -82,9 +84,13 @@ if (!api.includes("pricing?.shippingCost")) fail.push("Catalog API must validate
 if (!api.includes("image.url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
 if (/verifiedWarehouseOnly:\\s*true/.test(supplierApi)) fail.push("Supplier API must not claim US warehouse stock is verified from a country filter alone.");
 if (!supplierApi.includes("env.CJ_DEBUG_TOKEN")) fail.push("Supplier diagnostics must require the server-side CJ_DEBUG_TOKEN.");
+if (!supplierApi.includes("Object.prototype.hasOwnProperty.call(SEARCHES, requested)")) fail.push("Supplier API must restrict public searches to the explicit allowlist.");
+if (!supplierApi.includes('request.headers.get("X-CJ-Debug-Token")')) fail.push("Supplier diagnostics must read their access token from a request header, not the URL.");
+if (/\b(?:sk_live_|sk_test_|Bearer\s+[A-Za-z0-9._-]{16,})/.test(supplierApi)) fail.push("Supplier API must not contain hardcoded payment secrets or bearer tokens.");
 if (!supplierApi.includes('request.headers.get("X-CJ-Debug-Token")')) fail.push("Supplier diagnostics must read their access token from a request header, not the URL.");
 if (!supplierApi.includes('return json({ ok: false, error: "Not found." }, 404)')) fail.push("Unauthorized supplier diagnostics should return a non-revealing 404.");
 if (!supplierApi.includes("The US country filter is not proof of US-warehouse stock")) fail.push("Supplier API must explain that country filtering does not verify warehouse stock.");
+if (!api.includes("verificationNotes")) fail.push("Catalog API must omit internal verification notes from public output.");
 if (!api.includes("supplierProductId") || !api.includes("supplierSku")) {
   fail.push("Catalog API should explicitly remove supplier identifiers from public output.");
 }
