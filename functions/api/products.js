@@ -95,12 +95,17 @@ export async function onRequestGet({ request, env }) {
       productUrl: p.productUrl ?? p.productLink ?? p.supplierlink ?? null
     }));
     const terms = {
-      scrubber: ["scrubber", "cleaning brush", "electric cleaning brush", "spin brush"],
+      scrubber: ["electric spin scrubber", "electric cleaning brush", "electric scrubber", "spin scrubber", "cordless cleaning brush", "rotating cleaning brush", "powered scrub brush"],
       remote: ["bluetooth scrolling remote", "page turner", "scrolling remote", "phone remote"],
       dishrack: ["dish drying rack", "dish rack", "drying rack", "drainer rack"]
     }[requested];
     const products = normalized.filter((p) => {
       const name = String(p.name || "").toLowerCase();
+      if (requested === "scrubber") {
+        const hasScrubberIntent = terms.some((term) => name.includes(term));
+        const isAccessoryOrUnrelated = /filter|replacement|air purifier|water damage|seesaw|toy|heater|jack|massage|grinding|shaver|bidet|accessor|spare part|head only/i.test(name);
+        return hasScrubberIntent && !isAccessoryOrUnrelated;
+      }
       return terms.some((term) => name.includes(term));
     });
 
