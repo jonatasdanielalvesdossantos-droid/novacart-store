@@ -25,9 +25,9 @@ jobs:
           node-version: 22
       - name: Check JavaScript syntax
         run: |
-          node --check functions/api/products.js
-          node --check functions/api/catalog.js
-          node --check functions/api/health.js
-          node --check scripts/validate-catalog.mjs
+          node --input-type=module --check < functions/api/products.js
+          node --input-type=module --check < functions/api/catalog.js
+          node --input-type=module --check < functions/api/health.js
+          node --input-type=module --check < scripts/validate-catalog.mjs
       - name: Run local catalog safety checks
         run: node scripts/validate-catalog.mjs
