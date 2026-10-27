@@ -21,7 +21,7 @@ export async function onRequestGet({ request, env }) {
   }
 
   const debug = url.searchParams.get("debug") === "1";
-  const debugKeywords = ["electric cleaning brush", "spin scrubber", "electric spin scrubber", "rotating scrubber", "electric scrub brush", "cordless scrubber"];
+  const debugKeywords = ["electric cleaning brush", "spin scrubber", "electric spin scrubber", "rotating scrubber", "electric scrub brush", "cordless scrubber", "power scrubber", "bathroom scrubber", "cleaning brush electric", "electric brush cleaner"];
   const debugKeyword = url.searchParams.get("keyword");
   const searchKeyword = debug && requested === "scrubber" && debugKeyword && debugKeywords.includes(debugKeyword)
     ? debugKeyword
