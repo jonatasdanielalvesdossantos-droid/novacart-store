@@ -50,7 +50,7 @@ function isPubliclyApproved(product) {
     && product.verifiedAt.trim().length > 0
     && Array.isArray(product.images)
     && product.images.length > 0
-    && product.images.every((url) => typeof url === "string" && url.startsWith("https://"))
+    && product.images.every((image) => typeof image?.url === "string" && image.url.startsWith("https://"))
     && Array.isArray(product.variants)
     && product.variants.length > 0;
 }
