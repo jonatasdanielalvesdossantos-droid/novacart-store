@@ -140,6 +140,7 @@ export async function onRequestGet({ request, env }) {
       id: p.id ?? p.pid ?? p.productId ?? p.productid ?? null,
       categoryId: p.categoryId ?? null,
       threeCategoryName: p.threeCategoryName ?? null,
+      twoCategoryId: p.twoCategoryId ?? null,
       twoCategoryName: p.twoCategoryName ?? null,
       name: p.nameEn ?? p.nameen ?? p.productNameEn ?? p.productnameen ?? p.productName ?? p.name ?? "Unnamed product",
       sku: p.sku ?? p.productSku ?? p.productsku ?? null,
@@ -158,7 +159,7 @@ export async function onRequestGet({ request, env }) {
         category: categoryDiagnostic ? categoryName : undefined,
         keyword: categoryDiagnostic ? null : searchKeyword,
         rawCandidateCount: normalized.length,
-        candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory, categoryId: p.categoryId ?? null, categoryName: p.threeCategoryName ?? null, parentCategoryName: p.twoCategoryName ?? null }))
+        candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory, categoryId: p.categoryId ?? null, categoryName: p.threeCategoryName ?? null, parentCategoryId: p.twoCategoryId ?? null, parentCategoryName: p.twoCategoryName ?? null }))
       }, 200);
     }
 
