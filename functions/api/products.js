@@ -21,7 +21,7 @@ export async function onRequestGet({ request, env }) {
   }
 
   // Cache successful catalog searches to avoid repeated CJ API calls on refresh.
-  const cacheKey = new Request(new URL(`/api/products?q=${encodeURIComponent(requested)}`, url.origin).toString(), { method: "GET" });
+  const cacheKey = new Request(new URL(`/api/products-cache-v2?q=${encodeURIComponent(requested)}`, url.origin).toString(), { method: "GET" });
   const cache = caches.default;
   const cached = await cache.match(cacheKey);
   if (cached) {
