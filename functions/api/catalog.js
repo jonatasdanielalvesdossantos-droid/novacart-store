@@ -15,28 +15,42 @@ function isPubliclyApproved(product) {
 
   return product?.status === "approved"
     && typeof product.id === "string"
+    && product.id.trim().length > 0
     && typeof product.slug === "string"
+    && product.slug.trim().length > 0
     && typeof product.name === "string"
+    && product.name.trim().length > 0
     && typeof pricing?.salePrice === "number"
     && Number.isFinite(pricing.salePrice)
     && pricing.salePrice > 0
     && pricing.currency === "USD"
+    && typeof pricing?.shippingCost === "number"
+    && Number.isFinite(pricing.shippingCost)
+    && pricing.shippingCost >= 0
     && typeof logistics?.warehouse === "string"
+    && logistics.warehouse.trim().length > 0
     && typeof logistics?.stock === "number"
+    && Number.isFinite(logistics.stock)
     && logistics.stock > 0
-    && typeof logistics?.shippingCost === "number"
-    && Number.isFinite(logistics.shippingCost)
     && typeof logistics?.processingDays === "number"
+    && Number.isFinite(logistics.processingDays)
+    && logistics.processingDays >= 0
     && typeof logistics?.deliveryMinDays === "number"
+    && Number.isFinite(logistics.deliveryMinDays)
     && typeof logistics?.deliveryMaxDays === "number"
+    && Number.isFinite(logistics.deliveryMaxDays)
     && logistics.deliveryMinDays >= 0
     && logistics.deliveryMaxDays >= logistics.deliveryMinDays
     && logistics.destinationCountry === "US"
     && typeof logistics?.shippingMethod === "string"
+    && logistics.shippingMethod.trim().length > 0
     && typeof logistics?.returnPolicy === "string"
+    && logistics.returnPolicy.trim().length > 0
     && typeof product.verifiedAt === "string"
+    && product.verifiedAt.trim().length > 0
     && Array.isArray(product.images)
     && product.images.length > 0
+    && product.images.every((url) => typeof url === "string" && url.startsWith("https://"))
     && Array.isArray(product.variants)
     && product.variants.length > 0;
 }
