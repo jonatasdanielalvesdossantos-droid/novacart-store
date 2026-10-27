@@ -20,6 +20,16 @@ export async function onRequestGet({ request, env }) {
     }, 400);
   }
 
+  // Cache successful catalog searches to avoid repeated CJ API calls on refresh.
+  const cacheKey = new Request(new URL(`/api/products?q=${encodeURIComponent(requested)}`, url.origin).toString(), { method: "GET" });
+  const cache = caches.default;
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const headers = new Headers(cached.headers);
+    headers.set("X-NovaCart-Cache", "HIT");
+    return new Response(cached.body, { status: cached.status, headers });
+  }
+
   try {
     const authResponse = await fetch(
       "https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken",
@@ -33,7 +43,8 @@ export async function onRequestGet({ request, env }) {
     const token = auth?.data?.accessToken;
 
     if (!authResponse.ok || auth?.success !== true || typeof token !== "string" || !token) {
-      return json({ ok: false, error: "CJ authentication failed.", cjCode: auth?.code ?? null }, 502);
+      const limited = authResponse.status === 429 || auth?.code === 1600200;
+      return json({ ok: false, error: limited ? "CJ rate limit reached. Wait at least 10 seconds before trying again." : "CJ authentication failed.", cjCode: auth?.code ?? null, retryAfterSeconds: limited ? 10 : null }, limited ? 429 : 502);
     }
 
     const params = new URLSearchParams({
@@ -52,13 +63,15 @@ export async function onRequestGet({ request, env }) {
     const payload = await productResponse.json().catch(() => null);
 
     if (!productResponse.ok || payload?.success !== true) {
+      const limited = productResponse.status === 429 || payload?.code === 1600200;
       return json({
         ok: false,
-        error: "CJ product search failed.",
+        error: limited ? "CJ rate limit reached. Wait at least 10 seconds before trying again." : "CJ product search failed.",
         httpStatus: productResponse.status,
         cjCode: payload?.code ?? null,
+        retryAfterSeconds: limited ? 10 : null,
         message: typeof payload?.message === "string" ? payload.message : "Unexpected response from CJ."
-      }, 502);
+      }, limited ? 429 : 502);
     }
 
     const root = payload.data;
@@ -91,7 +104,7 @@ export async function onRequestGet({ request, env }) {
       return terms.some((term) => name.includes(term));
     });
 
-    return json({
+    const response = json({
       ok: true,
       search: requested,
       keyword: SEARCHES[requested],
@@ -102,6 +115,13 @@ export async function onRequestGet({ request, env }) {
       rawCandidateCount: normalized.length,
       note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
+    // Keep each category result for five minutes; no secret or token is cached.
+    const cacheHeaders = new Headers(response.headers);
+    cacheHeaders.set("Cache-Control", "public, max-age=300");
+    cacheHeaders.set("X-NovaCart-Cache", "MISS");
+    const cacheable = new Response(response.clone().body, { status: response.status, headers: cacheHeaders });
+    await cache.put(cacheKey, cacheable);
+    return new Response(response.body, { status: response.status, headers: cacheHeaders });
   } catch {
     return json({ ok: false, error: "Could not reach CJdropshipping." }, 502);
   }
