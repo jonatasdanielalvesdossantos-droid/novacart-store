@@ -99,13 +99,16 @@ export async function onRequestGet({ request, env }) {
     }
     const params = new URLSearchParams({
       page: "1",
-      size: "30",
+      size: categoryDiagnostic ? "100" : "30",
       keyWord: categoryDiagnostic ? "" : searchKeyword,
       countryCode: "US",
       sort: "desc",
       orderBy: "0"
     });
-    if (categoryDiagnostic) params.set("categoryId", allowedCategories[categoryName]);
+    if (categoryDiagnostic) {
+      params.set("categoryId", allowedCategories[categoryName]);
+      params.set("features", "enable_category");
+    }
     const productResponse = await fetch(
       "https://developers.cjdropshipping.com/api2.0/v1/product/listV2?" + params.toString(),
       { headers: { "CJ-Access-Token": token } }
@@ -135,6 +138,9 @@ export async function onRequestGet({ request, env }) {
 
     const normalized = items.map((p) => ({
       id: p.id ?? p.pid ?? p.productId ?? p.productid ?? null,
+      categoryId: p.categoryId ?? null,
+      threeCategoryName: p.threeCategoryName ?? null,
+      twoCategoryName: p.twoCategoryName ?? null,
       name: p.nameEn ?? p.nameen ?? p.productNameEn ?? p.productnameen ?? p.productName ?? p.name ?? "Unnamed product",
       sku: p.sku ?? p.productSku ?? p.productsku ?? null,
       image: p.bigImage ?? p.bigimg ?? p.bigimage ?? p.productImage ?? p.productImageUrl ?? p.image ?? p.img ?? null,
@@ -152,7 +158,7 @@ export async function onRequestGet({ request, env }) {
         category: categoryDiagnostic ? categoryName : undefined,
         keyword: categoryDiagnostic ? null : searchKeyword,
         rawCandidateCount: normalized.length,
-        candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory }))
+        candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory, categoryId: p.categoryId ?? null, categoryName: p.threeCategoryName ?? null, parentCategoryName: p.twoCategoryName ?? null }))
       }, 200);
     }
 
