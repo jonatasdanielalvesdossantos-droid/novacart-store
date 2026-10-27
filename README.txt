@@ -11,6 +11,7 @@ Files
 - `data/products.json`: internal candidate registry. Current candidates are all `needs_verification`; no sale prices, variants, images, shipping quotes or stock are approved.
 - `functions/api/catalog.js`: serves only records meeting the public approval checks and omits supplier identifiers and internal verification notes.
 - `docs/product-verification-checklist.md`: manual CJdropshipping verification checklist and shipping quote evidence table.
+- `docs/cj-search-diagnostics.md`: safe, rate-limit-aware procedure for diagnosing CJ search results without exposing the debug token.
 
 Catalog approval requirements
 Before setting a product status to `approved`, verify the exact supplier product and variant, current supplier cost, inventory for the US destination, shipping method and cost, processing and delivery estimates, image/variant match, return terms and selling margin. Record the verification date. Never place API keys, access tokens or other secrets in tracked files or client-side code.
