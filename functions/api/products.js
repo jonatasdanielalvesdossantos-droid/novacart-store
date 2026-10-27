@@ -91,7 +91,8 @@ export async function onRequestGet({ request, env }) {
       cleaning: "3633986F-83D2-4A6F-8F4D-79EE2CF77B8F",
       handtools: "55795653-09E8-4EE6-B477-1E30E7A601B2",
       bathroom: "B62EE40F-7650-4715-A7A5-BA227540593C",
-      kitchen: "E448A723-43DC-4BD8-A9AD-2FB9699338B4"
+      kitchen: "E448A723-43DC-4BD8-A9AD-2FB9699338B4",
+      homeappliances: "85EF081C-819E-448F-BD5C-C5D3F4CFAADA"
     };
     const categoryName = url.searchParams.get("category");
     if (categoryDiagnostic && !Object.prototype.hasOwnProperty.call(allowedCategories, categoryName)) {
@@ -106,7 +107,11 @@ export async function onRequestGet({ request, env }) {
       orderBy: "0"
     });
     if (categoryDiagnostic) {
-      params.set("categoryId", allowedCategories[categoryName]);
+      if (categoryName === "homeappliances") {
+        params.set("lv2categoryList", JSON.stringify([allowedCategories[categoryName]]));
+      } else {
+        params.set("categoryId", allowedCategories[categoryName]);
+      }
       params.set("features", "enable_category");
     }
     const productResponse = await fetch(
