@@ -33,6 +33,23 @@ try {
 
 if (!Array.isArray(registry.products)) fail.push("data/products.json must contain a products array.");
 
+if (Array.isArray(registry.products)) {
+  for (const p of registry.products) {
+    if (p?.status !== "needs_verification" && p?.status !== "approved") continue;
+    if (p.status === "needs_verification" && (
+      p.pricing?.salePrice !== null ||
+      p.pricing?.supplierCost !== null ||
+      p.pricing?.shippingCost !== null ||
+      (Array.isArray(p.images) && p.images.length > 0) ||
+      (Array.isArray(p.variants) && p.variants.length > 0) ||
+      p.verifiedAt !== null
+    )) {
+      fail.push(`${p.id || "Candidate product"}: unverified records must not contain sale price, supplier cost, shipping cost, images, variants, or verification date presented as verified.`);
+    }
+  }
+}
+
+
 const seenIds = new Set();
 const seenSlugs = new Set();
 for (const [index, p] of (registry.products ?? []).entries()) {
