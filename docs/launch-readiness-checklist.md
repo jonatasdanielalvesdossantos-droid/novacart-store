@@ -22,6 +22,7 @@ This checklist is intentionally conservative. The storefront remains a pre-launc
 - [ ] Review every public API route for accidental exposure of supplier identifiers, inventory diagnostics, internal errors, or privileged operations.
 - [ ] Ensure secret values and access tokens are never included in responses, logs, commits, or client-side code.
 - [ ] Verify rate limiting and caching behavior for supplier API routes; avoid repeated manual calls that could trigger supplier limits.
+- [ ] Keep supplier diagnostics behind the `CJ_DEBUG_TOKEN` Cloudflare secret and the `X-CJ-Debug-Token` request header; never put the token in a URL. Normal public searches must not expose debug candidates.
 - [ ] Add automated tests for catalog validation, public-field sanitization, empty-catalog behavior, and API error handling.
 - [ ] Review dependencies and run the project's available checks before release.
 - [ ] Confirm there is no active cart, checkout, payment, order creation, or customer-data collection before those flows are deliberately implemented and tested.
