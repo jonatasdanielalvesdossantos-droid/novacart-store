@@ -14,6 +14,14 @@ const apiFile = new URL("../functions/api/catalog.js", import.meta.url);
 let registry;
 let html;
 let api;
+const supplierApiFile = new URL("../functions/api/products.js", import.meta.url);
+let supplierApi;
+try {
+  supplierApi = readFileSync(supplierApiFile, "utf8");
+} catch (error) {
+  console.error("FAIL: Could not read supplier API file:", error.message);
+  process.exit(1);
+}
 try {
   registry = JSON.parse(readFileSync(productsFile, "utf8"));
   html = readFileSync(htmlFile, "utf8");
@@ -72,6 +80,8 @@ if (/\b(?:stripe|checkout\.sessions|payment_intent)\b/i.test(html)) {
 if (!api.includes('product?.status === "approved"')) fail.push("Catalog API must filter to approved products.");
 if (!api.includes("pricing?.shippingCost")) fail.push("Catalog API must validate shipping cost in the pricing object.");
 if (!api.includes("image.url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
+if (/verifiedWarehouseOnly:\\s*true/.test(supplierApi)) fail.push("Supplier API must not claim US warehouse stock is verified from a country filter alone.");
+if (!supplierApi.includes("The US country filter is not proof of US-warehouse stock")) fail.push("Supplier API must explain that country filtering does not verify warehouse stock.");
 if (!api.includes("supplierProductId") || !api.includes("supplierSku")) {
   fail.push("Catalog API should explicitly remove supplier identifiers from public output.");
 }
