@@ -20,14 +20,18 @@ export async function onRequestGet({ request, env }) {
     }, 400);
   }
 
-  // Cache successful catalog searches to avoid repeated CJ API calls on refresh.
+  const debug = url.searchParams.get("debug") === "1";
+
+  // Cache normal catalog searches; debug requests bypass cache so they show fresh candidates.
   const cacheKey = new Request(new URL(`/api/products-cache-v2?q=${encodeURIComponent(requested)}`, url.origin).toString(), { method: "GET" });
   const cache = caches.default;
-  const cached = await cache.match(cacheKey);
-  if (cached) {
-    const headers = new Headers(cached.headers);
-    headers.set("X-NovaCart-Cache", "HIT");
-    return new Response(cached.body, { status: cached.status, headers });
+  if (!debug) {
+    const cached = await cache.match(cacheKey);
+    if (cached) {
+      const headers = new Headers(cached.headers);
+      headers.set("X-NovaCart-Cache", "HIT");
+      return new Response(cached.body, { status: cached.status, headers });
+    }
   }
 
   try {
@@ -94,6 +98,17 @@ export async function onRequestGet({ request, env }) {
       warehouseCountryFilter: "US",
       productUrl: p.productUrl ?? p.productLink ?? p.supplierlink ?? null
     }));
+    if (debug) {
+      return json({
+        ok: true,
+        debug: true,
+        search: requested,
+        keyword: SEARCHES[requested],
+        rawCandidateCount: normalized.length,
+        candidates: normalized.map((p) => ({ name: p.name, sku: p.sku, price: p.price, inventory: p.inventory }))
+      }, 200);
+    }
+
     const terms = {
       scrubber: ["electric cleaning brush", "electric scrubber", "spin scrubber", "cordless cleaning brush", "rotating cleaning brush", "powered scrub brush", "electric spin scrubber", "rotating scrubber", "scrub brush"],
       remote: ["bluetooth scrolling remote", "page turner", "scrolling remote", "phone remote"],
