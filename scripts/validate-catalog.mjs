@@ -48,7 +48,7 @@ for (const [index, p] of (registry.products ?? []).entries()) {
     if (price?.currency !== "USD" || !Number.isFinite(price?.salePrice) || price.salePrice <= 0) fail.push(`${label}: approved product needs a positive USD sale price.`);
     if (!Number.isFinite(logistics?.stock) || logistics.stock <= 0) fail.push(`${label}: approved product needs positive stock.`);
     if (logistics?.destinationCountry !== "US") fail.push(`${label}: approved product must be verified for US destination.`);
-    if (!Number.isFinite(logistics?.shippingCost) || logistics.shippingCost < 0) fail.push(`${label}: approved product needs a verified shipping cost.`);
+    if (!Number.isFinite(price?.shippingCost) || price.shippingCost < 0) fail.push(`${label}: approved product needs a verified shipping cost in pricing.shippingCost.`);
     if (!Number.isFinite(logistics?.processingDays) || logistics.processingDays < 0) fail.push(`${label}: approved product needs processing days.`);
     if (!Number.isFinite(logistics?.deliveryMinDays) || !Number.isFinite(logistics?.deliveryMaxDays) || logistics.deliveryMinDays < 0 || logistics.deliveryMaxDays < logistics.deliveryMinDays) fail.push(`${label}: approved product needs a valid delivery range.`);
     if (typeof logistics?.warehouse !== "string" || !logistics.warehouse.trim()) fail.push(`${label}: approved product needs a warehouse.`);
@@ -70,6 +70,8 @@ if (/\b(?:stripe|checkout\.sessions|payment_intent)\b/i.test(html)) {
   fail.push("Unexpected payment/checkout implementation detected in storefront HTML.");
 }
 if (!api.includes('product?.status === "approved"')) fail.push("Catalog API must filter to approved products.");
+if (!api.includes("pricing?.shippingCost")) fail.push("Catalog API must validate shipping cost in the pricing object.");
+if (!api.includes("url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
 if (!api.includes("supplierProductId") || !api.includes("supplierSku")) {
   fail.push("Catalog API should explicitly remove supplier identifiers from public output.");
 }
