@@ -5,12 +5,29 @@ const SEARCHES = {
 };
 
 export async function onRequestGet({ request, env }) {
+  const url = new URL(request.url);
+  const debug = url.searchParams.get("debug") === "1";
+  // Supplier diagnostics expose candidate data and can bypass cache; require a server-side
+  // secret and a request header so the credential is not placed in URLs or query logs.
+  if (debug) {
+    const expectedDebugToken = env.CJ_DEBUG_TOKEN;
+    const suppliedDebugToken = request.headers.get("X-CJ-Debug-Token");
+    if (
+      typeof expectedDebugToken !== "string" ||
+      !expectedDebugToken.trim() ||
+      typeof suppliedDebugToken !== "string" ||
+      suppliedDebugToken.length !== expectedDebugToken.length ||
+      suppliedDebugToken !== expectedDebugToken
+    ) {
+      return json({ ok: false, error: "Not found." }, 404);
+    }
+  }
+
   const apiKey = env.CJ_API_KEY;
   if (typeof apiKey !== "string" || !apiKey.trim()) {
     return json({ ok: false, error: "CJ_API_KEY is not configured." }, 500);
   }
 
-  const url = new URL(request.url);
   const requested = (url.searchParams.get("q") || "scrubber").toLowerCase();
   if (!Object.prototype.hasOwnProperty.call(SEARCHES, requested)) {
     return json({
@@ -20,7 +37,6 @@ export async function onRequestGet({ request, env }) {
     }, 400);
   }
 
-  const debug = url.searchParams.get("debug") === "1";
   const debugKeywords = ["electric cleaning brush", "spin scrubber", "electric spin scrubber", "rotating scrubber", "electric scrub brush", "cordless scrubber", "power scrubber", "bathroom scrubber", "cleaning brush electric", "electric brush cleaner"];
   const debugKeyword = url.searchParams.get("keyword");
   const searchKeyword = debug && requested === "scrubber" && debugKeyword && debugKeywords.includes(debugKeyword)
@@ -188,11 +204,11 @@ export async function onRequestGet({ request, env }) {
       search: requested,
       keyword: SEARCHES[requested],
       warehouseCountryFilter: "US",
-      verifiedWarehouseOnly: true,
+      verifiedWarehouseOnly: false,
       count: products.length,
       products,
       rawCandidateCount: normalized.length,
-      note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
+      note: "The US country filter is not proof of US-warehouse stock. Verify the exact variant, warehouse, live stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
     // Keep each category result for five minutes; no secret or token is cached.
     const cacheHeaders = new Headers(response.headers);

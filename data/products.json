@@ -1,0 +1,106 @@
+{
+  "products": [
+    {
+      "id": "nova-scrubber-001",
+      "supplierProductId": "1480016958685581312",
+      "supplierSku": null,
+      "slug": "rechargeable-kitchen-cleaning-brush",
+      "status": "needs_verification",
+      "name": "Rechargeable Electric Kitchen Cleaning Brush (candidate)",
+      "description": null,
+      "benefits": [],
+      "category": "Cleaning",
+      "tags": [],
+      "images": [],
+      "variants": [],
+      "pricing": {
+        "currency": "USD",
+        "salePrice": null,
+        "supplierCost": null,
+        "shippingCost": null,
+        "paymentFeeEstimate": null,
+        "contributionMargin": null
+      },
+      "logistics": {
+        "warehouse": null,
+        "stock": null,
+        "processingDays": null,
+        "deliveryMinDays": null,
+        "deliveryMaxDays": null,
+        "destinationCountry": "US",
+        "shippingMethod": null,
+        "returnPolicy": null
+      },
+      "verifiedAt": null,
+      "verificationNotes": "Tentative identification from a public third-party listing referencing this CJ ID. Not verified against the authenticated CJ product record. Confirm exact variant, SKU, current price, US warehouse stock, freight and delivery estimate in CJ before approval."
+    },
+    {
+      "id": "nova-scrubber-002",
+      "supplierProductId": "2407020239431617500",
+      "supplierSku": null,
+      "slug": "cleaning-brush-candidate-002",
+      "status": "needs_verification",
+      "name": "Product candidate 2407020239431617500",
+      "description": null,
+      "benefits": [],
+      "category": "Cleaning",
+      "tags": [],
+      "images": [],
+      "variants": [],
+      "pricing": {
+        "currency": "USD",
+        "salePrice": null,
+        "supplierCost": null,
+        "shippingCost": null,
+        "paymentFeeEstimate": null,
+        "contributionMargin": null
+      },
+      "logistics": {
+        "warehouse": null,
+        "stock": null,
+        "processingDays": null,
+        "deliveryMinDays": null,
+        "deliveryMaxDays": null,
+        "destinationCountry": "US",
+        "shippingMethod": null,
+        "returnPolicy": null
+      },
+      "verifiedAt": null,
+      "verificationNotes": "Product identity not independently confirmed. Open this exact ID in the authenticated CJ product catalog and confirm it is the intended product before adding a commercial name or marketing claims."
+    },
+    {
+      "id": "nova-long-handle-scrub-brush",
+      "supplierProductId": null,
+      "supplierSku": "CJSD3011193",
+      "slug": "long-handle-floor-scrub-brush",
+      "status": "needs_verification",
+      "name": "Long-Handle Floor Scrub Brush",
+      "description": null,
+      "benefits": [],
+      "category": "Cleaning",
+      "tags": [],
+      "images": [],
+      "variants": [],
+      "pricing": {
+        "currency": "USD",
+        "salePrice": null,
+        "supplierCost": null,
+        "shippingCost": null,
+        "paymentFeeEstimate": null,
+        "contributionMargin": null
+      },
+      "logistics": {
+        "warehouse": null,
+        "stock": null,
+        "processingDays": null,
+        "deliveryMinDays": null,
+        "deliveryMaxDays": null,
+        "destinationCountry": "US",
+        "shippingMethod": null,
+        "returnPolicy": null
+      },
+      "verifiedAt": null,
+      "verificationNotes": "CJ search result was a manual brush with long handle, not an electric spin scrubber. Verify variant, current costs, US shipping and delivery before approval."
+    }
+  ]
+}
