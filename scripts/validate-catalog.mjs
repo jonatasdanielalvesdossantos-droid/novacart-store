@@ -81,6 +81,9 @@ if (!api.includes('product?.status === "approved"')) fail.push("Catalog API must
 if (!api.includes("pricing?.shippingCost")) fail.push("Catalog API must validate shipping cost in the pricing object.");
 if (!api.includes("image.url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
 if (/verifiedWarehouseOnly:\\s*true/.test(supplierApi)) fail.push("Supplier API must not claim US warehouse stock is verified from a country filter alone.");
+if (!supplierApi.includes("env.CJ_DEBUG_TOKEN")) fail.push("Supplier diagnostics must require the server-side CJ_DEBUG_TOKEN.");
+if (!supplierApi.includes('request.headers.get("X-CJ-Debug-Token")')) fail.push("Supplier diagnostics must read their access token from a request header, not the URL.");
+if (!supplierApi.includes('return json({ ok: false, error: "Not found." }, 404)')) fail.push("Unauthorized supplier diagnostics should return a non-revealing 404.");
 if (!supplierApi.includes("The US country filter is not proof of US-warehouse stock")) fail.push("Supplier API must explain that country filtering does not verify warehouse stock.");
 if (!api.includes("supplierProductId") || !api.includes("supplierSku")) {
   fail.push("Catalog API should explicitly remove supplier identifiers from public output.");
