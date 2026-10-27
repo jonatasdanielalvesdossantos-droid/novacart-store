@@ -188,11 +188,11 @@ export async function onRequestGet({ request, env }) {
       search: requested,
       keyword: SEARCHES[requested],
       warehouseCountryFilter: "US",
-      verifiedWarehouseOnly: true,
+      verifiedWarehouseOnly: false,
       count: products.length,
       products,
       rawCandidateCount: normalized.length,
-      note: "Verify the current variant, stock, shipping cost and delivery estimate in CJ before listing or selling."
+      note: "The US country filter is not proof of US-warehouse stock. Verify the exact variant, warehouse, live stock, shipping cost and delivery estimate in CJ before listing or selling."
     }, 200);
     // Keep each category result for five minutes; no secret or token is cached.
     const cacheHeaders = new Headers(response.headers);
