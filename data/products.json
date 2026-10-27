@@ -6,7 +6,7 @@
       "supplierSku": null,
       "slug": "rechargeable-kitchen-cleaning-brush",
       "status": "needs_verification",
-      "name": "Rechargeable Kitchen Cleaning Brush",
+      "name": "Rechargeable Electric Kitchen Cleaning Brush (candidate)",
       "description": null,
       "benefits": [],
       "category": "Cleaning",
@@ -32,7 +32,7 @@
         "returnPolicy": null
       },
       "verifiedAt": null,
-      "verificationNotes": "Candidate only. Confirm exact product, variant, SKU, inventory, shipping, delivery estimate, images and return terms directly in CJdropshipping before approval."
+      "verificationNotes": "Tentative identification from a public third-party listing referencing this CJ ID. Not verified against the authenticated CJ product record. Confirm exact variant, SKU, current price, US warehouse stock, freight and delivery estimate in CJ before approval."
     },
     {
       "id": "nova-scrubber-002",
@@ -40,7 +40,7 @@
       "supplierSku": null,
       "slug": "cleaning-brush-candidate-002",
       "status": "needs_verification",
-      "name": "Cleaning Brush Candidate 002",
+      "name": "Product candidate 2407020239431617500",
       "description": null,
       "benefits": [],
       "category": "Cleaning",
@@ -66,7 +66,7 @@
         "returnPolicy": null
       },
       "verifiedAt": null,
-      "verificationNotes": "Candidate only. Confirm exact product identity before adding marketing copy or approving."
+      "verificationNotes": "Product identity not independently confirmed. Open this exact ID in the authenticated CJ product catalog and confirm it is the intended product before adding a commercial name or marketing claims."
     },
     {
       "id": "nova-long-handle-scrub-brush",
