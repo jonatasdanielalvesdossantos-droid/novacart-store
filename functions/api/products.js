@@ -1,5 +1,5 @@
 const SEARCHES = {
-  scrubber: "electric spin scrubber",
+  scrubber: "electric cleaning brush",
   remote: "bluetooth scrolling remote",
   dishrack: "dish drying rack"
 };
@@ -95,7 +95,7 @@ export async function onRequestGet({ request, env }) {
       productUrl: p.productUrl ?? p.productLink ?? p.supplierlink ?? null
     }));
     const terms = {
-      scrubber: ["electric spin scrubber", "electric cleaning brush", "electric scrubber", "spin scrubber", "cordless cleaning brush", "rotating cleaning brush", "powered scrub brush"],
+      scrubber: ["electric cleaning brush", "electric scrubber", "spin scrubber", "cordless cleaning brush", "rotating cleaning brush", "powered scrub brush", "electric spin scrubber", "rotating scrubber", "scrub brush"],
       remote: ["bluetooth scrolling remote", "page turner", "scrolling remote", "phone remote"],
       dishrack: ["dish drying rack", "dish rack", "drying rack", "drainer rack"]
     }[requested];
