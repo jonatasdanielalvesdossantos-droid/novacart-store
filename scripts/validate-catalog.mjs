@@ -55,7 +55,7 @@ for (const [index, p] of (registry.products ?? []).entries()) {
     if (typeof logistics?.shippingMethod !== "string" || !logistics.shippingMethod.trim()) fail.push(`${label}: approved product needs a shipping method.`);
     if (typeof logistics?.returnPolicy !== "string" || !logistics.returnPolicy.trim()) fail.push(`${label}: approved product needs return terms.`);
     if (typeof p.verifiedAt !== "string" || !p.verifiedAt.trim()) fail.push(`${label}: approved product needs a verification date.`);
-    if (!Array.isArray(p.images) || p.images.length === 0 || p.images.some(url => typeof url !== "string" || !url.startsWith("https://"))) fail.push(`${label}: approved product images must be non-empty HTTPS URLs.`);
+    if (!Array.isArray(p.images) || p.images.length === 0 || p.images.some(image => typeof image?.url !== "string" || !image.url.startsWith("https://"))) fail.push(`${label}: approved product images must be non-empty HTTPS URLs.`);
     if (!Array.isArray(p.variants) || p.variants.length === 0) fail.push(`${label}: approved product needs at least one verified variant.`);
   } else if (p.status !== "needs_verification") {
     fail.push(`${label}: unknown status "${p.status}". Use needs_verification or approved.`);
@@ -71,7 +71,7 @@ if (/\b(?:stripe|checkout\.sessions|payment_intent)\b/i.test(html)) {
 }
 if (!api.includes('product?.status === "approved"')) fail.push("Catalog API must filter to approved products.");
 if (!api.includes("pricing?.shippingCost")) fail.push("Catalog API must validate shipping cost in the pricing object.");
-if (!api.includes("url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
+if (!api.includes("image.url.startsWith(\"https://\")")) fail.push("Catalog API must reject non-HTTPS product image URLs.");
 if (!api.includes("supplierProductId") || !api.includes("supplierSku")) {
   fail.push("Catalog API should explicitly remove supplier identifiers from public output.");
 }
